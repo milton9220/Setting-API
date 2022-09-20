@@ -1,0 +1,19 @@
+{
+    "name": "walton/settings-api",
+    "description": "Its a settings api plugin",
+    "type": "project",
+    "license": "GPL",
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "SettingsApi\\Inc\\": "./inc"
+        }
+    },
+    "authors": [
+        {
+            "name": "milton9220",
+            "email": "monjurhasan105142@gmail.com"
+        }
+    ],
+    "require": {}
+}

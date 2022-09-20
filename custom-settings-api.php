@@ -3,7 +3,7 @@
  * @package MiltonPlugin
  */
 /****
-Plugin Name:Settings Api
+Plugin Name:Custom Settings Api
 Plugin URI:
 Author: Milton
 Author URI:
@@ -18,4 +18,12 @@ Text Domain:settings-api
 
 if(! defined('ABSPATH')){
     die;
+}
+
+if(file_exists(dirname(__FILE__).'/vendor/autoload.php')){
+    require_once dirname(__FILE__).'/vendor/autoload.php';
+}
+
+if(class_exists('SettingsApi\\Inc\\Init')){
+    SettingsApi\Inc\Init::register_services();
 }
