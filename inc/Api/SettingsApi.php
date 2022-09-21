@@ -4,6 +4,9 @@
  */
 namespace SettingsApi\Inc\Api;
 
+use SettingsApi\Inc\Api\Callbacks\CallbackText;
+use SettingsApi\Inc\Api\Callbacks\CallbackMultiCheck;
+
 class SettingsApi {
 
     public $admin_pages = array();
@@ -104,12 +107,22 @@ class SettingsApi {
 
         foreach ( $this->settings_fields as $section => $field ) {
             foreach ( $field as $option ) {
-
+               
                 $name = $option['name'];
                 $type = isset( $option['type'] ) ? $option['type'] : 'text';
                 $label = isset( $option['label'] ) ? $option['label'] : '';
-                $callback = isset( $option['callback'] ) ? $option['callback'] : array( $this, 'callback_' . $type );
 
+                switch ($type) {
+                    case 'text':
+                        $callback = isset( $option['callback'] ) ? $option['callback'] : array( CallbackText::class, 'callback_text');
+                        break;
+                    case 'multicheck':
+                        $callback = isset( $option['callback'] ) ? $option['callback'] : array( CallbackMultiCheck::class, 'callback_multicheck');
+                        break;
+                    default:
+                        $callback = isset( $option['callback'] ) ? $option['callback'] : array( CallbackText::class, 'callback_text');
+                        break;
+                }
                 $args = array(
                     'id'                => $name,
                     'class'             => isset( $option['class'] ) ? $option['class'] : $name,
@@ -143,7 +156,6 @@ class SettingsApi {
         if ( !$options ) {
             return $options;
         }
-
         foreach( $options as $option_slug => $option_value ) {
             $sanitize_callback = $this->get_sanitize_callback( $option_slug );
 
@@ -176,36 +188,8 @@ class SettingsApi {
 
         return false;
     }
-    function callback_text( $args ) {
 
-        $value       = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-        $size        = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
-        $type        = isset( $args['type'] ) ? $args['type'] : 'text';
-        $placeholder = empty( $args['placeholder'] ) ? '' : ' placeholder="' . $args['placeholder'] . '"';
-
-        $html        = sprintf( '<input type="%1$s" class="%2$s-text" id="%3$s[%4$s]" name="%3$s[%4$s]" value="%5$s"%6$s/>', $type, $size, $args['section'], $args['id'], $value, $placeholder );
-        $html       .= $this->get_field_description( $args );
-
-        echo $html;
-    }
-    function callback_multicheck( $args ) {
-
-        $value = $this->get_option( $args['id'], $args['section'], $args['std'] );
-        $html  = '<fieldset>';
-        $html .= sprintf( '<input type="hidden" name="%1$s[%2$s]" value="" />', $args['section'], $args['id'] );
-        foreach ( $args['options'] as $key => $label ) {
-            $checked = isset( $value[$key] ) ? $value[$key] : '0';
-            $html    .= sprintf( '<label for="wpuf-%1$s[%2$s][%3$s]">', $args['section'], $args['id'], $key );
-            $html    .= sprintf( '<input type="checkbox" class="checkbox" id="wpuf-%1$s[%2$s][%3$s]" name="%1$s[%2$s][%3$s]" value="%3$s" %4$s />', $args['section'], $args['id'], $key, checked( $checked, $key, false ) );
-            $html    .= sprintf( '%1$s</label><br>',  $label );
-        }
-
-        $html .= $this->get_field_description( $args );
-        $html .= '</fieldset>';
-
-        echo $html;
-    }
-    function get_option( $option, $section, $default = '' ) {
+    public static function get_option( $option, $section, $default = '' ) {
 
         $options = get_option( $section );
 
@@ -215,7 +199,7 @@ class SettingsApi {
 
         return $default;
     }
-    public function get_field_description( $args ) {
+    public static function get_field_description( $args ) {
         if ( ! empty( $args['desc'] ) ) {
             $desc = sprintf( '<p class="description">%s</p>', $args['desc'] );
         } else {
@@ -265,7 +249,6 @@ class SettingsApi {
             <?php } ?>
         </div>
         <?php
-
     }
 
 
