@@ -5,7 +5,8 @@
 namespace SettingsApi\Inc\Api;
 
 use \SettingsApi\Inc\Api\SettingsApi;
-use  SettingsApi\Inc\Api\Callbacks\SettingsCallbacks;
+use  \SettingsApi\Inc\Api\Callbacks\SettingsCallbacks;
+use \SettingsApi\Inc\Api\Callbacks\AdminCallbacks;
 
 class ConfigureSettings{
 
@@ -18,6 +19,8 @@ class ConfigureSettings{
     public function register(){
 
         self::$settings_api=new SettingsApi();
+
+        $this->callbacks = new AdminCallbacks();
 
         $this->settings_callbacks = new SettingsCallbacks();
 
@@ -49,7 +52,7 @@ class ConfigureSettings{
                 'menu_title'  => 'About',
                 'capability'  => 'manage_options',
                 'menu_slug'   => 'about',
-                'callback'    => array( $this, 'about_callback' ),
+                'callback'    => array( $this->callbacks, 'about_callback' ),
             ),
         );
     }
