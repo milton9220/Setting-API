@@ -156,6 +156,8 @@ class SettingsApi {
         if ( !$options ) {
             return $options;
         }
+
+
         foreach( $options as $option_slug => $option_value ) {
             $sanitize_callback = $this->get_sanitize_callback( $option_slug );
 

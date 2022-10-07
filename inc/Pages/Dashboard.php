@@ -8,6 +8,7 @@ use \SettingsApi\Inc\Api\Callbacks\AdminCallbacks;
 
 use \SettingsApi\Inc\Api\SettingsApi;
 
+use \SettingsApi\Inc\Api\ConfigureSettings;
 
 class Dashboard {
     public $settings;
@@ -15,7 +16,6 @@ class Dashboard {
     public $callbacks;
 
     public $sanitizeCallbacks;
-
 
     public $pages = array();
 
@@ -38,7 +38,7 @@ class Dashboard {
                 'menu_title' => 'Cm Settings Api',
                 'capability' => 'manage_options',
                 'menu_slug'  => 'settings_api',
-                'callback'   => array( $this->callbacks, 'adminDashboard' ),
+                'callback'   => array( ConfigureSettings::class, 'cm_settings_callback' ),
                 'icon_url'   => 'dashicons-smiley',
                 'position'   => '60',
             ),

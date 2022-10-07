@@ -9,7 +9,7 @@ use  SettingsApi\Inc\Api\Callbacks\SettingsCallbacks;
 
 class ConfigureSettings{
 
-    private $settings_api;
+    private static $settings_api;
 
     public $callbacks;
 
@@ -17,7 +17,7 @@ class ConfigureSettings{
 
     public function register(){
 
-        $this->settings_api=new SettingsApi();
+        self::$settings_api=new SettingsApi();
 
         $this->settings_callbacks = new SettingsCallbacks();
 
@@ -29,7 +29,7 @@ class ConfigureSettings{
         $this->setSubPages();
 
 
-        $this->settings_api->addSubPages( $this->subpages )->register();
+        self::$settings_api->addSubPages( $this->subpages )->register();
 
     }
 
@@ -41,7 +41,15 @@ class ConfigureSettings{
                 'menu_title'  => 'Settings',
                 'capability'  => 'manage_options',
                 'menu_slug'   => 'cm_settings',
-                'callback'    => array( $this, 'cm_settings_callback' ),
+                'callback'    => array( __CLASS__, 'cm_settings_callback' ),
+            ),
+            array(
+                'parent_slug' => 'settings_api',
+                'page_title'  => 'About',
+                'menu_title'  => 'About',
+                'capability'  => 'manage_options',
+                'menu_slug'   => 'about',
+                'callback'    => array( $this, 'about_callback' ),
             ),
         );
     }
@@ -57,7 +65,7 @@ class ConfigureSettings{
                 'title' => __( 'Advanced Settings', 'settings-api' )
             )
         );
-        $this->settings_api->set_sections( $sections );
+        self::$settings_api->set_sections( $sections );
     }
     public function set_settings_fields(){
         $settings_fields = array(
@@ -88,15 +96,18 @@ class ConfigureSettings{
                 ),
             )
         );
-        $this->settings_api->set_fields($settings_fields);
+        self::$settings_api->set_fields($settings_fields);
     }
 
-    public function cm_settings_callback(){
+    public static function cm_settings_callback(){
         echo '<div class="wrap">';
 
-        $this->settings_api->show_navigation();
-        $this->settings_api->show_forms();
+        self::$settings_api->show_navigation();
+        self::$settings_api->show_forms();
 
         echo '</div>';
+    }
+    public function about_callback(){
+        echo '<h2>About Us</h2>';
     }
 }

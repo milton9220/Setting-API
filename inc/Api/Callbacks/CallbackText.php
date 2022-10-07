@@ -8,6 +8,7 @@ use SettingsApi\Inc\Api\SettingsApi;
 
 class CallbackText{
     public static function callback_text($args){
+
         $value       = esc_attr( SettingsApi::get_option( $args['id'], $args['section'], $args['std'] ) );
         $size        = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
         $type        = isset( $args['type'] ) ? $args['type'] : 'text';
